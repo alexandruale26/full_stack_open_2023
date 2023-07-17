@@ -1,17 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import contactService from "./services/contacts";
+
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 
 function App() {
-  const data = [
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ];
-
-  const [persons, setPersons] = useState(data);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
@@ -20,19 +15,58 @@ function App() {
   const handleNumberChange = (e) => setNewNumber(e.target.value);
   const handleFilterChange = (e) => setFilter(e.target.value);
 
+  const hook = () => {
+    contactService.getAll().then((initialContacts) => setPersons(initialContacts));
+  };
+
+  const resetAndRepopulate = (newPersonsState) => {
+    setPersons(newPersonsState);
+    setNewName("");
+    setNewNumber("");
+  };
+
+  useEffect(hook, []);
+
   const addPerson = (e) => {
     e.preventDefault();
 
-    if (persons.some((person) => person.name === newName)) return alert(`${newName} is already added to phonebook!`);
+    const personToUpdate = persons.find((person) => person.name === newName);
+
+    if (personToUpdate) {
+      if (
+        !window.confirm(`${personToUpdate.name} is already added to phonebook, replace the old number with a new one?`)
+      )
+        return;
+
+      const updatedContact = { ...personToUpdate, number: newNumber };
+
+      contactService.updateNumber(personToUpdate.id, updatedContact).then((receivedUpdated) => {
+        const modifiedPersons = persons.map((contact) =>
+          contact.id !== receivedUpdated.id ? contact : receivedUpdated
+        );
+
+        resetAndRepopulate(modifiedPersons);
+      });
+      return;
+    }
 
     const personObject = {
       name: newName,
       number: newNumber,
     };
 
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    contactService.create(personObject).then((returnedContact) => {
+      resetAndRepopulate(persons.concat(returnedContact));
+    });
+  };
+
+  const handleRemove = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      contactService.remove(person.id).then((_) => {
+        const modifiedPersons = persons.filter((contact) => contact.id !== person.id);
+        setPersons(modifiedPersons);
+      });
+    }
   };
 
   const filteredPersons = persons.filter((person) => person.name.toLowerCase().includes(filter.toLowerCase()));
@@ -49,7 +83,7 @@ function App() {
 
       <h3>Numbers</h3>
 
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} handleRemove={handleRemove} />
     </div>
   );
 }

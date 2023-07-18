@@ -7,13 +7,13 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-const create = (newContact) => {
-  const request = axios.post(baseUrl, newContact);
+const create = (newObject) => {
+  const request = axios.post(baseUrl, newObject);
   return request.then((response) => response.data);
 };
 
-const updateNumber = (id, updatedContact) => {
-  const request = axios.put(`${baseUrl}/${id}`, updatedContact);
+const updateNumber = (id, updatedObject) => {
+  const request = axios.put(`${baseUrl}/${id}`, updatedObject);
   return request.then((response) => response.data);
 };
 

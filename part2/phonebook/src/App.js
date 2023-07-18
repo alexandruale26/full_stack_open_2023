@@ -4,12 +4,14 @@ import contactService from "./services/contacts";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 
 function App() {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const handleNameChange = (e) => setNewName(e.target.value);
   const handleNumberChange = (e) => setNewNumber(e.target.value);
@@ -23,6 +25,11 @@ function App() {
     setPersons(newPersonsState);
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleNotification = (message, isError, duration = 3000) => {
+    setNotification({ message, isError });
+    setTimeout(() => setNotification(null), duration);
   };
 
   useEffect(hook, []);
@@ -40,13 +47,22 @@ function App() {
 
       const updatedContact = { ...personToUpdate, number: newNumber };
 
-      contactService.updateNumber(personToUpdate.id, updatedContact).then((receivedUpdated) => {
-        const modifiedPersons = persons.map((contact) =>
-          contact.id !== receivedUpdated.id ? contact : receivedUpdated
-        );
+      contactService
+        .updateNumber(personToUpdate.id, updatedContact)
+        .then((receivedUpdated) => {
+          const modifiedPersons = persons.map((contact) =>
+            contact.id !== receivedUpdated.id ? contact : receivedUpdated
+          );
 
-        resetAndRepopulate(modifiedPersons);
-      });
+          resetAndRepopulate(modifiedPersons);
+          handleNotification(`Updated ${receivedUpdated.name}`, false);
+        })
+        .catch((_) => {
+          handleNotification(`Information of ${updatedContact.name} has already been removed from server`, true, 5000);
+          setPersons(persons.filter((p) => p.id !== updatedContact.id));
+          setNewName("");
+          setNewNumber("");
+        });
       return;
     }
 
@@ -57,15 +73,23 @@ function App() {
 
     contactService.create(personObject).then((returnedContact) => {
       resetAndRepopulate(persons.concat(returnedContact));
+      handleNotification(`Created ${returnedContact.name}`, false);
     });
   };
 
   const handleRemove = (person) => {
     if (window.confirm(`Delete ${person.name}?`)) {
-      contactService.remove(person.id).then((_) => {
-        const modifiedPersons = persons.filter((contact) => contact.id !== person.id);
-        setPersons(modifiedPersons);
-      });
+      contactService
+        .remove(person.id)
+        .then((_) => {
+          const modifiedPersons = persons.filter((contact) => contact.id !== person.id);
+          setPersons(modifiedPersons);
+          handleNotification(`Deleted ${person.name}`, true);
+        })
+        .catch((_) => {
+          handleNotification(`${person.name} has already been removed from server`, true, 5000);
+          setPersons(persons.filter((p) => p.id !== person.id));
+        });
     }
   };
 
@@ -74,6 +98,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
 
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 

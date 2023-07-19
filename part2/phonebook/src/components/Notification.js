@@ -2,7 +2,7 @@ const Notification = ({ notification }) => {
   if (notification === null) return null;
 
   const style = {
-    color: notification.isError ? "red" : "green",
+    color: notification.isCritical ? "red" : "green",
     background: "lightgrey",
     fontSize: 20,
     borderStyle: "solid",

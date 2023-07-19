@@ -27,8 +27,8 @@ function App() {
     setNewNumber("");
   };
 
-  const handleNotification = (message, isError, duration = 3000) => {
-    setNotification({ message, isError });
+  const handleNotification = (message, isCritical, duration = 3000) => {
+    setNotification({ message, isCritical });
     setTimeout(() => setNotification(null), duration);
   };
 

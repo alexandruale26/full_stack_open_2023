@@ -71,10 +71,13 @@ function App() {
       number: newNumber,
     };
 
-    contactService.create(personObject).then((returnedContact) => {
-      resetAndRepopulate(persons.concat(returnedContact));
-      handleNotification(`Created ${returnedContact.name}`, false);
-    });
+    contactService
+      .create(personObject)
+      .then((returnedContact) => {
+        resetAndRepopulate(persons.concat(returnedContact));
+        handleNotification(`Created ${returnedContact.name}`, false);
+      })
+      .catch((error) => handleNotification(error.response.data.error, true, 5000));
   };
 
   const handleRemove = (person) => {

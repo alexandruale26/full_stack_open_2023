@@ -1,0 +1,17 @@
+GET http://localhost:3000/api/blogs
+
+###
+
+POST http://localhost:3000/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Cute Dogs",
+  "author": "James",
+  "url": "https://cutedogs.uk",
+  "likes": 1000
+}
+
+###
+
+DELETE http://localhost:3000/api/blogs/:1

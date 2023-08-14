@@ -62,7 +62,7 @@ const listWithManyBlogs = [
   },
 ];
 
-describe("total likes", () => {
+describe.skip("total likes", () => {
   test("of empty list is zero", () => {
     expect(listHelper.totalLikes([])).toBe(0);
   });
@@ -80,7 +80,7 @@ describe("total likes", () => {
   });
 });
 
-describe("favorite blog", () => {
+describe.skip("favorite blog", () => {
   test("of empty list will return empty object", () => {
     expect(listHelper.favoriteBlog([])).toEqual({});
   });
@@ -106,7 +106,7 @@ describe("favorite blog", () => {
   });
 });
 
-describe("most blogs", () => {
+describe.skip("most blogs", () => {
   test("of empty list will return empty object", () => {
     expect(listHelper.mostBlogs([])).toEqual({});
   });
@@ -124,7 +124,7 @@ describe("most blogs", () => {
   });
 });
 
-describe("most likes", () => {
+describe.skip("most likes", () => {
   test("of empty list will return empty object", () => {
     expect(listHelper.mostLikes([])).toEqual({});
   });

@@ -27,11 +27,18 @@ const initialBlogs = [
   },
 ];
 
-const backup = {
-  title: "React patterns",
-  author: "Michael Chan",
-  url: "https://reactpatterns.com/",
-  likes: 7,
+const nonExistingId = async () => {
+  const blog = new Blog({
+    title: "Go To Statement Considered Harmful",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    likes: 5,
+  });
+
+  await blog.save();
+  await blog.deleteOne();
+
+  return blog._id.toString();
 };
 
 const blogsInDb = async () => {
@@ -39,4 +46,4 @@ const blogsInDb = async () => {
   return blogs.map((b) => b.toJSON());
 };
 
-module.exports = { initialBlogs, blogsInDb, backup };
+module.exports = { initialBlogs, blogsInDb, nonExistingId };

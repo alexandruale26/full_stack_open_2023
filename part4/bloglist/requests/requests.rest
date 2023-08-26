@@ -6,15 +6,11 @@ POST http://localhost:3000/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Cute Dogs",
+  "title": "Cute Dogs in UK",
   "author": "James",
   "url": "https://cutedogs.uk",
   "likes": 1000
 }
-
-###
-
-DELETE http://localhost:3000/api/blogs/:1
 
 ###
 
@@ -27,3 +23,7 @@ Content-Type: application/json
   "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
   "likes": 100
 }
+
+###
+
+DELETE http://localhost:3000/api/blogs/:1

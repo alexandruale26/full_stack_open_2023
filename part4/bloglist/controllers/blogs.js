@@ -7,11 +7,17 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+blogsRouter.get("/:id", async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+
+  if (blog) response.json(blog);
+  else response.status(404).end();
+});
+
 blogsRouter.post("/", async (request, response) => {
   const { body } = request;
 
-  const users = await User.find();
-  const user = users[0];
+  const user = await User.findById(request.user.id);
 
   const newBlog = new Blog({
     title: body.title,
@@ -28,14 +34,14 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.get("/:id", async (request, response) => {
+blogsRouter.delete("/:id", async (request, response) => {
+  const userId = request.user.id;
   const blog = await Blog.findById(request.params.id);
 
-  if (blog) response.json(blog);
-  else response.status(404).end();
-});
+  if (blog === null) return response.status(404).send({ error: "invalid id" });
 
-blogsRouter.delete("/:id", async (request, response) => {
+  if (blog.user.toString() !== userId) return response.status(401).send({ error: "invalid user" });
+
   await Blog.findByIdAndDelete(request.params.id);
   response.status(204).end();
 });

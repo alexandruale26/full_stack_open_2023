@@ -1,0 +1,29 @@
+GET http://localhost:3000/api/blogs
+
+###
+
+POST http://localhost:3000/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Cute Dogs in UK",
+  "author": "James",
+  "url": "https://cutedogs.uk",
+  "likes": 1000
+}
+
+###
+
+PUT http://localhost:3000/api/blogs/64d9049cb3dcac6f66503b22
+Content-Type: application/json
+
+{
+  "title": "Go To Statement Considered Harmful",
+  "author": "Edsger W. Dijkstra",
+  "url": "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+  "likes": 100
+}
+
+###
+
+DELETE http://localhost:3000/api/blogs/64eb0d91d1cfbce189b430e9

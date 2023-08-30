@@ -1,19 +1,38 @@
-const BlogForm = ({ addBlog, blog, handles }) => {
+import { useState } from "react";
+
+const BlogForm = ({ createBlog }) => {
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+
+  const resetBlogFields = () => {
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+  };
+
+  const addBlog = async (event) => {
+    event.preventDefault();
+
+    createBlog({ title, author, url });
+    resetBlogFields();
+  };
+
   return (
     <div>
       <h2>create new</h2>
       <form onSubmit={addBlog}>
         <div>
           <label htmlFor="title">title:</label>
-          <input type="text" id="title" name="Title" value={blog.title} onChange={handles.handleTitleChange} />
+          <input id="title" value={title} onChange={({ target }) => setTitle(target.value)} />
         </div>
         <div>
           <label htmlFor="author">author:</label>
-          <input type="text" id="author" name="Author" value={blog.author} onChange={handles.handleAuthorChange} />
+          <input id="author" value={author} onChange={({ target }) => setAuthor(target.value)} />
         </div>
         <div>
           <label htmlFor="url">url:</label>
-          <input type="text" id="url" name="Url" value={blog.url} onChange={handles.handleUrlChange} />
+          <input id="url" value={url} onChange={({ target }) => setUrl(target.value)} />
         </div>
         <button type="submit">create</button>
       </form>

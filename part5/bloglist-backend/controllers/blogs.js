@@ -3,12 +3,12 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
-  response.json(blogs);
+  const blogs = await Blog.find({ user: request.user.id }).populate("user", { username: 1, name: 1 });
+  return response.json(blogs);
 });
 
 blogsRouter.get("/:id", async (request, response) => {
-  const blog = await Blog.findById(request.params.id);
+  const blog = await Blog.findById(request.params.id).populate("user", { username: 1, name: 1 });
 
   if (blog) response.json(blog);
   else response.status(404).end();
@@ -47,15 +47,16 @@ blogsRouter.delete("/:id", async (request, response) => {
 });
 
 blogsRouter.put("/:id", async (request, response) => {
-  const { title, author, url, likes } = request.body;
+  const { title, author, url, likes, user } = request.body;
 
-  const updatedBlog = await Blog.findByIdAndUpdate(
-    request.params.id,
-    { title, author, url, likes },
+  const updatedBlog = await Blog.findOneAndUpdate(
+    { _id: request.params.id, user: request.user.id },
+    { title, author, url, likes, user },
     { new: true, context: "query" }
   );
 
-  response.json(updatedBlog);
+  if (updatedBlog) response.json(updatedBlog);
+  else response.status(400).send({ error: "error updating" });
 });
 
 module.exports = blogsRouter;

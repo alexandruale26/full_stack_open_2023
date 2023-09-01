@@ -18,9 +18,16 @@ function App() {
   const [notification, setNotification] = useState(null);
   const blogFormRef = useRef();
 
+  const sortByLikes = (blogsToSort) => blogsToSort.sort((a, b) => b.likes - a.likes);
+
+  const removeBlog = (idToRemove) =>
+    blogs.filter((blog) => {
+      if (blog.id !== idToRemove) return blog;
+    });
+
   const populateBlogs = async () => {
     const initialBlogs = await blogService.getAll();
-    setBlogs(initialBlogs);
+    setBlogs(sortByLikes(initialBlogs));
   };
 
   const loginAndPopulate = async (user) => {
@@ -66,11 +73,40 @@ function App() {
     try {
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(newBlog);
+      response.user = { username: user.username, name: user.name };
 
-      setBlogs(blogs.concat(response));
+      setBlogs(sortByLikes(blogs.concat(response)));
       createNotification(`A new blog ${response.title} by ${response.author} added`, false);
     } catch (exception) {
       createNotification("Invalid blog data", true);
+    }
+  };
+
+  const updateBlog = async (id, blog) => {
+    try {
+      const response = await blogService.update(id, blog);
+      response.user = { username: user.username, name: user.name, id: response.user };
+
+      const updatedBlogs = blogs.map((blog) => {
+        if (blog.id !== response.id) return blog;
+        return response;
+      });
+
+      setBlogs(sortByLikes(updatedBlogs));
+    } catch (exception) {
+      createNotification("Error updating blog", true);
+    }
+  };
+
+  const remove = async (id) => {
+    try {
+      await blogService.remove(id);
+      const curatedBlogs = removeBlog(id);
+
+      setBlogs(curatedBlogs);
+      createNotification("Blog successfully removed", false);
+    } catch (exception) {
+      createNotification("Error deleting blog", true);
     }
   };
 
@@ -84,7 +120,7 @@ function App() {
 
   const blogForm = () => {
     return (
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
     );
@@ -103,7 +139,7 @@ function App() {
 
       <h3>Blogs</h3>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} update={updateBlog} remove={remove} />
       ))}
     </div>
   );

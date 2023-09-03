@@ -15,7 +15,7 @@ const BlogForm = ({ createBlog }) => {
   const addBlog = async (event) => {
     event.preventDefault();
 
-    createBlog({ title, author, url });
+    await createBlog({ title, author, url });
     resetBlogFields();
   };
 

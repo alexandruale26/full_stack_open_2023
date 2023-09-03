@@ -38,11 +38,13 @@ const Blog = ({ blog, update, remove }) => {
         {blog.title} {blog.author}
         <button onClick={() => setVisible(!visible)}>{visible ? "hide" : "view"}</button>
       </div>
-      <div style={showWhenIsVisible}>
+      <div style={showWhenIsVisible} className="blogHidden">
         <div>{blog.url}</div>{" "}
         <div>
           likes {blog.likes}
-          <button onClick={handleUpdateBlog}>like</button>
+          <button className="likeButton" onClick={handleUpdateBlog}>
+            like
+          </button>
         </div>
         <div>{blog.user.name}</div>
         <button onClick={handleRemoveBlog} style={{ backgroundColor: "aquamarine" }}>

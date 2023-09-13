@@ -15,7 +15,7 @@ const Anecdote = ({ anecdote, handleClick }) => {
 
 const AnecdotesList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
-    if (filter === "") return anecdotes.sort((a, b) => (a.votes < b.votes ? 1 : -1));
+    if (filter === "") return anecdotes.toSorted((a, b) => (a.votes < b.votes ? 1 : -1));
 
     return anecdotes.filter((a) => a.content.toLowerCase().includes(filter.toLowerCase()));
   });

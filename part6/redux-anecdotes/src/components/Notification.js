@@ -1,8 +1,6 @@
-import { useSelector, useDispatch } from "react-redux";
-import { resetNotification } from "../reducers/notificationReducer";
+import { useSelector } from "react-redux";
 
 const Notification = () => {
-  const dispatch = useDispatch();
   const notification = useSelector(({ notification }) => notification);
 
   const style = {
@@ -12,13 +10,8 @@ const Notification = () => {
     color: "darkMagenta",
   };
 
-  const renderNotification = () => {
-    setTimeout(() => dispatch(resetNotification()), 5000);
-    return <div style={style}>{notification}</div>;
-  };
-
   if (notification) {
-    return renderNotification();
+    return <div style={style}>{notification}</div>;
   }
 };
 
